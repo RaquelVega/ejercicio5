@@ -1,54 +1,98 @@
 /**
- * CPU Process - Represents computational intensive processes.
- * Examples: Video encoding, mathematical calculations, image processing.
+ * Proceso CPU - Representa procesos intensivos en cálculo.
+ * Ejemplos: Codificación de video, cálculos matemáticos, renderizado.
+ * 
+ * @author Raquel Vega
+ * @version 1.0
  */
 public class ProcesoCPU extends Proceso {
-    private String taskType;
-    private int intensity; // 1-5 scale
+    private String tipoTarea;
+    private int intensidad; // Escala 1-5
     
-    public ProcesoCPU(String name, String taskType, int intensity) {
-        super(name);
-        this.taskType = taskType;
-        this.intensity = Math.max(1, Math.min(5, intensity));
+    /**
+     * Constructor completo.
+     * @param nombre Nombre del proceso
+     * @param tipoTarea Tipo de tarea a realizar
+     * @param intensidad Intensidad del procesamiento (1-5)
+     */
+    public ProcesoCPU(String nombre, String tipoTarea, int intensidad) {
+        super(nombre);
+        this.tipoTarea = tipoTarea != null ? tipoTarea : "Tarea CPU";
+        this.intensidad = Math.max(1, Math.min(5, intensidad));
     }
     
-    // Overloaded constructor
-    public ProcesoCPU(String name, String taskType) {
-        this(name, taskType, 3); // Default medium intensity
+    /**
+     * Constructor con intensidad por defecto.
+     * @param nombre Nombre del proceso
+     * @param tipoTarea Tipo de tarea a realizar
+     */
+    public ProcesoCPU(String nombre, String tipoTarea) {
+        this(nombre, tipoTarea, 3); // Intensidad media por defecto
     }
     
+    /**
+     * Implementación específica de ejecución para procesos CPU.
+     * Simula trabajo computacional intensivo.
+     */
     @Override
-    public void execute() {
-        System.out.println("  → Executing " + taskType + " (Intensity: " + intensity + "/5)");
-        
-        // Simulate CPU work
-        for (int i = 1; i <= intensity; i++) {
-            System.out.println("    Processing step " + i + "/" + intensity + "...");
+    public void ejecutar() {
+        // Solo mostrar información técnica, no mensajes de usuario
+        for (int i = 1; i <= intensidad; i++) {
             try {
-                Thread.sleep(300);
+                Thread.sleep(200 + (intensidad * 50)); // Simula carga CPU
             } catch (InterruptedException e) {
-                System.out.println("    Process interrupted!");
+                Thread.currentThread().interrupt();
                 return;
             }
         }
-        System.out.println("  → CPU task completed!");
     }
     
     @Override
-    public String getProcessType() {
-        return "CPU Process";
+    public String obtenerTipoProceso() {
+        return "Proceso CPU";
     }
     
-    // Getters and Setters
-    public String getTaskType() { return taskType; }
-    public void setTaskType(String taskType) { this.taskType = taskType; }
-    public int getIntensity() { return intensity; }
-    public void setIntensity(int intensity) { 
-        this.intensity = Math.max(1, Math.min(5, intensity)); 
+    @Override
+    public int obtenerTiempoEjecucion() {
+        return (200 + (intensidad * 50)) * intensidad;
     }
     
+    // Getters y Setters con validación
+    public String getTipoTarea() { 
+        return tipoTarea; 
+    }
+    
+    public void setTipoTarea(String tipoTarea) { 
+        if (tipoTarea != null && !tipoTarea.trim().isEmpty()) {
+            this.tipoTarea = tipoTarea.trim();
+        }
+    }
+    
+    public int getIntensidad() { 
+        return intensidad; 
+    }
+    
+    public void setIntensidad(int intensidad) { 
+        this.intensidad = Math.max(1, Math.min(5, intensidad)); 
+    }
+    
+    /**
+     * Override de toString con información específica del proceso CPU.
+     */
     @Override
     public String toString() {
-        return super.toString() + " - Task: " + taskType + ", Intensity: " + intensity;
+        return super.toString() + 
+               String.format(" - Tarea: %s, Intensidad: %d/5", tipoTarea, intensidad);
+    }
+    
+    /**
+     * Override de equals considerando atributos específicos.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) return false;
+        ProcesoCPU that = (ProcesoCPU) obj;
+        return intensidad == that.intensidad && 
+               tipoTarea.equals(that.tipoTarea);
     }
 }
